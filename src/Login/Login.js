@@ -1,68 +1,60 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { API_URL } from '../config';
 
 const Login = () => {
+    // State variables for email and password
+    const [password, setPassword] = useState("");
     const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [showerr, setShowerr] = useState('');
-    const [isSubmitting, setIsSubmitting] = useState(false);
+
+    // Get navigation function from react-router-dom
     const navigate = useNavigate();
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        setIsSubmitting(true);
-        setShowerr('');
-
-        // Basic validation
-        if (!email || !password) {
-            setShowerr('Please fill in all fields');
-            setIsSubmitting(false);
-            return;
+    // Check if user is already authenticated, then redirect to home page
+    useEffect(() => {
+        if (sessionStorage.getItem("auth-token")) {
+            navigate("/");
         }
+    }, [navigate]);
 
-        try {
-            // API Call to login user
-            const response = await fetch(`${API_URL}/api/auth/login`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    email: email,
-                    password: password,
-                }),
-            });
+    // Function to handle login form submission
+    const login = async (e) => {
+        e.preventDefault();
+        
+        // Send a POST request to the login API endpoint
+        const res = await fetch(`${API_URL}/api/auth/login`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                email: email,
+                password: password,
+            }),
+        });
 
-            const json = await response.json();
+        // Parse the response JSON
+        const json = await res.json();
+        if (json.authtoken) {
+            // If authentication token is received, store it in session storage
+            sessionStorage.setItem('auth-token', json.authtoken);
+            sessionStorage.setItem('email', email);
 
-            if (json.authtoken) {
-                // Store user data in session storage
-                sessionStorage.setItem("auth-token", json.authtoken);
-                sessionStorage.setItem("name", json.name || email); // Use name from response or fallback to email
-                sessionStorage.setItem("phone", json.phone || '');
-                sessionStorage.setItem("email", email);
-                sessionStorage.setItem("role", json.role || 'patient');
+            // Dispatch custom event to notify Navbar of auth state change
+            window.dispatchEvent(new Event('authStateChange'));
 
-                // Dispatch custom event to notify Navbar of auth state change
-                window.dispatchEvent(new Event('authStateChange'));
-
-                // Redirect user to home page
-                navigate("/");
-            } else {
-                if (json.errors) {
-                    for (const error of json.errors) {
-                        setShowerr(error.msg);
-                    }
-                } else {
-                    setShowerr(json.error || 'Invalid email or password. Please try again.');
+            // Redirect to home page and reload the window
+            navigate('/');
+            window.location.reload();
+        } else {
+            // Handle errors if authentication fails
+            if (json.errors) {
+                for (const error of json.errors) {
+                    alert(error.msg);
                 }
+            } else {
+                alert(json.error);
             }
-        } catch (error) {
-            console.error('Login error:', error);
-            setShowerr('Network error. Please try again.');
-        } finally {
-            setIsSubmitting(false);
         }
     };
 
@@ -78,27 +70,26 @@ const Login = () => {
                                     <p className="text-muted">Welcome back</p>
                                 </div>
                                 
-                                <form onSubmit={handleSubmit}>
-                                    {/* General Error Message */}
-                                    {showerr && (
-                                        <div className="alert alert-danger" role="alert">
-                                            <i className="bi bi-exclamation-triangle me-2"></i>
-                                            {showerr}
-                                        </div>
-                                    )}
-
+                                <div className="text-center mb-3">
+                                    <p className="mb-0">Are you a new member? 
+                                        <Link to="/signup" className="text-primary text-decoration-none"> Sign Up Here</Link>
+                                    </p>
+                                </div>
+                                
+                                <form onSubmit={login}>
                                     {/* Email Field */}
                                     <div className="mb-3">
                                         <label htmlFor="email" className="form-label">Email</label>
                                         <input 
+                                            value={email} 
+                                            onChange={(e) => setEmail(e.target.value)} 
                                             type="email" 
-                                            className="form-control"
+                                            name="email" 
                                             id="email" 
-                                            name="email"
+                                            className="form-control" 
                                             placeholder="Enter your email" 
-                                            value={email}
-                                            onChange={(e) => setEmail(e.target.value)}
-                                            required 
+                                            aria-describedby="helpId"
+                                            required
                                         />
                                     </div>
 
@@ -106,14 +97,14 @@ const Login = () => {
                                     <div className="mb-4">
                                         <label htmlFor="password" className="form-label">Password</label>
                                         <input 
+                                            value={password} 
+                                            onChange={(e) => setPassword(e.target.value)} 
                                             type="password" 
-                                            className="form-control"
+                                            name="password" 
                                             id="password" 
-                                            name="password"
+                                            className="form-control" 
                                             placeholder="Enter your password" 
-                                            value={password}
-                                            onChange={(e) => setPassword(e.target.value)}
-                                            required 
+                                            required
                                         />
                                     </div>
 
@@ -122,28 +113,11 @@ const Login = () => {
                                         <button 
                                             type="submit" 
                                             className="btn btn-primary btn-lg"
-                                            disabled={isSubmitting}
                                         >
-                                            {isSubmitting ? (
-                                                <>
-                                                    <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                                                    Logging in...
-                                                </>
-                                            ) : (
-                                                <>
-                                                    <i className="bi bi-box-arrow-in-right me-2"></i>Login
-                                                </>
-                                            )}
+                                            <i className="bi bi-box-arrow-in-right me-2"></i>Login
                                         </button>
                                     </div>
                                 </form>
-
-                                {/* Sign Up Link */}
-                                <div className="text-center mt-4">
-                                    <p className="mb-0">Don't have an account? 
-                                        <Link to="/signup" className="text-primary text-decoration-none"> Sign up here</Link>
-                                    </p>
-                                </div>
                             </div>
                         </div>
                     </div>
