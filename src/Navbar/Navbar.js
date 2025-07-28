@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import './Navbar.css';
 
 const Navbar = () => {
@@ -6,9 +7,9 @@ const Navbar = () => {
         <nav className="navbar navbar-expand-lg navbar-dark bg-primary">
             <div className="container">
                 {/* Logo */}
-                <a className="navbar-brand fw-bold" href="#">
+                <Link className="navbar-brand fw-bold" to="/">
                     <i className="bi bi-heart-pulse me-2"></i>HealthCare.Ice
-                </a>
+                </Link>
                 
                 {/* Mobile toggle button */}
                 <button 
@@ -27,25 +28,25 @@ const Navbar = () => {
                 <div className="collapse navbar-collapse" id="navbarNav">
                     <ul className="navbar-nav me-auto">
                         <li className="nav-item">
-                            <a className="nav-link" href="search-doctor.html">
+                            <Link className="nav-link" to="/search-doctor">
                                 <i className="bi bi-calendar-check me-1"></i>Appointments
-                            </a>
+                            </Link>
                         </li>
                         <li className="nav-item">
-                            <a className="nav-link" href="reviews.html">
+                            <Link className="nav-link" to="/reviews">
                                 <i className="bi bi-star me-1"></i>Reviews
-                            </a>
+                            </Link>
                         </li>
                     </ul>
                     
                     {/* Auth buttons */}
                     <div className="d-flex">
-                        <a href="signup.html" className="btn btn-outline-light me-2">
+                        <Link to="/signup" className="btn btn-outline-light me-2">
                             <i className="bi bi-person-plus me-1"></i>Sign Up
-                        </a>
-                        <a href="login.html" className="btn btn-light">
+                        </Link>
+                        <Link to="/login" className="btn btn-light">
                             <i className="bi bi-box-arrow-in-right me-1"></i>Login
-                        </a>
+                        </Link>
                     </div>
                 </div>
             </div>

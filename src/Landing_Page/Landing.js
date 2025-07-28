@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 const Landing = () => {
     return (
@@ -14,9 +15,9 @@ const Landing = () => {
                             Book your appointment today and take the first step towards better health.
                         </p>
                         <div className="d-flex flex-column flex-sm-row gap-3">
-                            <a href="search-doctor.html" className="btn btn-primary btn-lg">
+                            <Link to="/search-doctor" className="btn btn-primary btn-lg">
                                 <i className="bi bi-calendar-plus me-2"></i>Book Appointment
-                            </a>
+                            </Link>
                             <button className="btn btn-outline-primary btn-lg">
                                 <i className="bi bi-play-circle me-2"></i>Learn More
                             </button>
