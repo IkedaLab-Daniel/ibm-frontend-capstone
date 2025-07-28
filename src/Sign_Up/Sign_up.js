@@ -1,111 +1,82 @@
 import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { API_URL } from '../config';
 
+// Function component for Sign Up form
 const Sign_Up = () => {
-    const [formData, setFormData] = useState({
-        role: '',
-        name: '',
-        phone: '',
-        email: '',
-        password: ''
-    });
-
-    const [errors, setErrors] = useState({});
+    // State variables using useState hook
+    const [name, setName] = useState('');
+    const [email, setEmail] = useState('');
+    const [phone, setPhone] = useState('');
+    const [password, setPassword] = useState('');
+    const [role, setRole] = useState('');
+    const [showerr, setShowerr] = useState(''); // State to show error messages
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const navigate = useNavigate(); // Navigation hook from react-router
 
-    const handleInputChange = (e) => {
-        const { name, value } = e.target;
-        setFormData(prev => ({
-            ...prev,
-            [name]: value
-        }));
-
-        // Clear error when user starts typing
-        if (errors[name]) {
-            setErrors(prev => ({
-                ...prev,
-                [name]: ''
-            }));
-        }
-    };
-
-    const validateForm = () => {
-        const newErrors = {};
-
-        // Role validation
-        if (!formData.role) {
-            newErrors.role = 'Please select a role';
-        }
-
-        // Name validation
-        if (!formData.name.trim()) {
-            newErrors.name = 'Name is required';
-        } else if (formData.name.trim().length < 2) {
-            newErrors.name = 'Name must be at least 2 characters long';
-        } else if (!/^[a-zA-Z\s]+$/.test(formData.name.trim())) {
-            newErrors.name = 'Name can only contain letters and spaces';
-        }
-
-        // > Phone validation
-        if (!formData.phone) {
-            newErrors.phone = 'Phone number is required';
-        } else if (!/^\d{10,15}$/.test(formData.phone.replace(/\D/g, ''))) {
-            newErrors.phone = 'Please enter a valid phone number (10-15 digits)';
-        }
-
-        // Email validation
-        if (!formData.email) {
-            newErrors.email = 'Email is required';
-        } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-            newErrors.email = 'Please enter a valid email address';
-        }
-
-        // Password validation
-        if (!formData.password) {
-            newErrors.password = 'Password is required';
-        } else if (formData.password.length < 8) {
-            newErrors.password = 'Password must be at least 8 characters long';
-        } else if (!/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/.test(formData.password)) {
-            newErrors.password = 'Password must contain at least one uppercase letter, one lowercase letter, and one number';
-        }
-
-        setErrors(newErrors);
-        return Object.keys(newErrors).length === 0;
-    };
-
-    const handleSubmit = async (e) => {
-        e.preventDefault();
+    // Function to handle form submission
+    const register = async (e) => {
+        e.preventDefault(); // Prevent default form submission
         setIsSubmitting(true);
+        setShowerr(''); // Clear previous errors
 
-        if (!validateForm()) {
+        // Basic validation
+        if (!name || !email || !phone || !password || !role) {
+            setShowerr('Please fill in all fields');
             setIsSubmitting(false);
             return;
         }
 
         try {
-            // Simulate API call
-            await new Promise(resolve => setTimeout(resolve, 1000));
-            
-            // Here you would typically handle the signup logic
-            console.log('Sign up attempt:', formData);
-            alert('Account created successfully! Please login.');
-            
-            // Reset form
-            setFormData({
-                role: '',
-                name: '',
-                phone: '',
-                email: '',
-                password: ''
+            // API Call to register user
+            const response = await fetch(`${API_URL}/api/auth/register`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    name: name,
+                    email: email,
+                    password: password,
+                    phone: phone,
+                    role: role, // Include role in the request
+                }),
             });
-            setErrors({});
+
+            const json = await response.json(); // Parse the response JSON
+
+            if (json.authtoken) {
+                // Store user data in session storage
+                sessionStorage.setItem("auth-token", json.authtoken);
+                sessionStorage.setItem("name", name);
+                sessionStorage.setItem("phone", phone);
+                sessionStorage.setItem("email", email);
+                sessionStorage.setItem("role", role);
+
+                // Dispatch custom event to notify Navbar of auth state change
+                window.dispatchEvent(new Event('authStateChange'));
+
+                // Redirect user to home page
+                navigate("/");
+                // Note: Removed window.location.reload() as it's not needed with proper state management
+            } else {
+                if (json.errors) {
+                    for (const error of json.errors) {
+                        setShowerr(error.msg); // Show error messages
+                    }
+                } else {
+                    setShowerr(json.error || 'Registration failed. Please try again.');
+                }
+            }
         } catch (error) {
-            console.error('Signup error:', error);
-            alert('An error occurred. Please try again.');
+            console.error('Registration error:', error);
+            setShowerr('Network error. Please try again.');
         } finally {
             setIsSubmitting(false);
         }
     };
 
+    // JSX to render the Sign Up form
     return (
         <section className="py-5 bg-light">
             <div className="container">
@@ -118,16 +89,24 @@ const Sign_Up = () => {
                                     <p className="text-muted">Create your account</p>
                                 </div>
                                 
-                                <form onSubmit={handleSubmit}>
+                                <form method="POST" onSubmit={register}>
+                                    {/* Error Message */}
+                                    {showerr && (
+                                        <div className="alert alert-danger" role="alert">
+                                            <i className="bi bi-exclamation-triangle me-2"></i>
+                                            {showerr}
+                                        </div>
+                                    )}
+
                                     {/* Role Field */}
                                     <div className="mb-3">
                                         <label htmlFor="role" className="form-label">Role</label>
                                         <select 
-                                            className={`form-select ${errors.role ? 'is-invalid' : ''}`}
+                                            className="form-select"
                                             id="role" 
                                             name="role"
-                                            value={formData.role}
-                                            onChange={handleInputChange}
+                                            value={role}
+                                            onChange={(e) => setRole(e.target.value)}
                                             required
                                         >
                                             <option value="">Select your role</option>
@@ -135,7 +114,6 @@ const Sign_Up = () => {
                                             <option value="doctor">Doctor</option>
                                             <option value="admin">Admin</option>
                                         </select>
-                                        {errors.role && <div className="invalid-feedback">{errors.role}</div>}
                                     </div>
 
                                     {/* Name Field */}
@@ -143,15 +121,14 @@ const Sign_Up = () => {
                                         <label htmlFor="name" className="form-label">Name</label>
                                         <input 
                                             type="text" 
-                                            className={`form-control ${errors.name ? 'is-invalid' : ''}`}
+                                            className="form-control"
                                             id="name" 
                                             name="name"
                                             placeholder="Enter your full name" 
-                                            value={formData.name}
-                                            onChange={handleInputChange}
+                                            value={name}
+                                            onChange={(e) => setName(e.target.value)}
                                             required 
                                         />
-                                        {errors.name && <div className="invalid-feedback">{errors.name}</div>}
                                     </div>
 
                                     {/* Phone Field */}
@@ -159,15 +136,14 @@ const Sign_Up = () => {
                                         <label htmlFor="phone" className="form-label">Phone</label>
                                         <input 
                                             type="tel" 
-                                            className={`form-control ${errors.phone ? 'is-invalid' : ''}`}
+                                            className="form-control"
                                             id="phone" 
                                             name="phone"
                                             placeholder="Enter your phone number" 
-                                            value={formData.phone}
-                                            onChange={handleInputChange}
+                                            value={phone}
+                                            onChange={(e) => setPhone(e.target.value)}
                                             required 
                                         />
-                                        {errors.phone && <div className="invalid-feedback">{errors.phone}</div>}
                                     </div>
 
                                     {/* Email Field */}
@@ -175,15 +151,14 @@ const Sign_Up = () => {
                                         <label htmlFor="email" className="form-label">Email</label>
                                         <input 
                                             type="email" 
-                                            className={`form-control ${errors.email ? 'is-invalid' : ''}`}
+                                            className="form-control"
                                             id="email" 
                                             name="email"
                                             placeholder="Enter your email" 
-                                            value={formData.email}
-                                            onChange={handleInputChange}
+                                            value={email}
+                                            onChange={(e) => setEmail(e.target.value)}
                                             required 
                                         />
-                                        {errors.email && <div className="invalid-feedback">{errors.email}</div>}
                                     </div>
 
                                     {/* Password Field */}
@@ -191,18 +166,14 @@ const Sign_Up = () => {
                                         <label htmlFor="password" className="form-label">Password</label>
                                         <input 
                                             type="password" 
-                                            className={`form-control ${errors.password ? 'is-invalid' : ''}`}
+                                            className="form-control"
                                             id="password" 
                                             name="password"
                                             placeholder="Create a password" 
-                                            value={formData.password}
-                                            onChange={handleInputChange}
+                                            value={password}
+                                            onChange={(e) => setPassword(e.target.value)}
                                             required 
                                         />
-                                        {errors.password && <div className="invalid-feedback">{errors.password}</div>}
-                                        <div className="form-text">
-                                            Password must be at least 8 characters and contain uppercase, lowercase, and number.
-                                        </div>
                                     </div>
 
                                     {/* Submit Button */}
@@ -229,7 +200,7 @@ const Sign_Up = () => {
                                 {/* Login Link */}
                                 <div className="text-center mt-4">
                                     <p className="mb-0">Already have an account? 
-                                        <a href="/login" className="text-primary text-decoration-none"> Login here</a>
+                                        <Link to="/login" className="text-primary text-decoration-none"> Login here</Link>
                                     </p>
                                 </div>
                             </div>

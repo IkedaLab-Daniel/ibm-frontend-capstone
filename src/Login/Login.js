@@ -1,77 +1,66 @@
 import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { API_URL } from '../config';
 
 const Login = () => {
-    const [formData, setFormData] = useState({
-        email: '',
-        password: ''
-    });
-
-    const [errors, setErrors] = useState({});
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [showerr, setShowerr] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
-
-    const handleInputChange = (e) => {
-        const { name, value } = e.target;
-        setFormData(prev => ({
-            ...prev,
-            [name]: value
-        }));
-
-        // Clear error when user starts typing
-        if (errors[name]) {
-            setErrors(prev => ({
-                ...prev,
-                [name]: ''
-            }));
-        }
-    };
-
-    const validateForm = () => {
-        const newErrors = {};
-
-        // Email validation
-        if (!formData.email) {
-            newErrors.email = 'Email is required';
-        } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-            newErrors.email = 'Please enter a valid email address';
-        }
-
-        // Password validation
-        if (!formData.password) {
-            newErrors.password = 'Password is required';
-        } else if (formData.password.length < 6) {
-            newErrors.password = 'Password must be at least 6 characters long';
-        }
-
-        setErrors(newErrors);
-        return Object.keys(newErrors).length === 0;
-    };
+    const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setIsSubmitting(true);
+        setShowerr('');
 
-        if (!validateForm()) {
+        // Basic validation
+        if (!email || !password) {
+            setShowerr('Please fill in all fields');
             setIsSubmitting(false);
             return;
         }
 
         try {
-            // Simulate API call
-            await new Promise(resolve => setTimeout(resolve, 1000));
-            
-            // Here you would typically handle the login logic
-            console.log('Login attempt:', formData);
-            alert('Login successful! Welcome back.');
-            
-            // Reset form on successful login
-            setFormData({
-                email: '',
-                password: ''
+            // API Call to login user
+            const response = await fetch(`${API_URL}/api/auth/login`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    email: email,
+                    password: password,
+                }),
             });
-            setErrors({});
+
+            const json = await response.json();
+
+            if (json.authtoken) {
+                // Store user data in session storage
+                sessionStorage.setItem("auth-token", json.authtoken);
+                sessionStorage.setItem("name", json.name || email); // Use name from response or fallback to email
+                sessionStorage.setItem("phone", json.phone || '');
+                sessionStorage.setItem("email", email);
+                sessionStorage.setItem("role", json.role || 'patient');
+
+                // Dispatch custom event to notify Navbar of auth state change
+                window.dispatchEvent(new Event('authStateChange'));
+
+                // Redirect user to home page
+                navigate("/");
+            } else {
+                if (json.errors) {
+                    for (const error of json.errors) {
+                        setShowerr(error.msg);
+                    }
+                } else {
+                    setShowerr(json.error || 'Invalid email or password. Please try again.');
+                }
+            }
         } catch (error) {
             console.error('Login error:', error);
-            setErrors({ general: 'Invalid email or password. Please try again.' });
+            setShowerr('Network error. Please try again.');
         } finally {
             setIsSubmitting(false);
         }
@@ -91,10 +80,10 @@ const Login = () => {
                                 
                                 <form onSubmit={handleSubmit}>
                                     {/* General Error Message */}
-                                    {errors.general && (
+                                    {showerr && (
                                         <div className="alert alert-danger" role="alert">
                                             <i className="bi bi-exclamation-triangle me-2"></i>
-                                            {errors.general}
+                                            {showerr}
                                         </div>
                                     )}
 
@@ -103,15 +92,14 @@ const Login = () => {
                                         <label htmlFor="email" className="form-label">Email</label>
                                         <input 
                                             type="email" 
-                                            className={`form-control ${errors.email ? 'is-invalid' : ''}`}
+                                            className="form-control"
                                             id="email" 
                                             name="email"
                                             placeholder="Enter your email" 
-                                            value={formData.email}
-                                            onChange={handleInputChange}
+                                            value={email}
+                                            onChange={(e) => setEmail(e.target.value)}
                                             required 
                                         />
-                                        {errors.email && <div className="invalid-feedback">{errors.email}</div>}
                                     </div>
 
                                     {/* Password Field */}
@@ -119,15 +107,14 @@ const Login = () => {
                                         <label htmlFor="password" className="form-label">Password</label>
                                         <input 
                                             type="password" 
-                                            className={`form-control ${errors.password ? 'is-invalid' : ''}`}
+                                            className="form-control"
                                             id="password" 
                                             name="password"
                                             placeholder="Enter your password" 
-                                            value={formData.password}
-                                            onChange={handleInputChange}
+                                            value={password}
+                                            onChange={(e) => setPassword(e.target.value)}
                                             required 
                                         />
-                                        {errors.password && <div className="invalid-feedback">{errors.password}</div>}
                                     </div>
 
                                     {/* Submit Button */}
@@ -154,7 +141,7 @@ const Login = () => {
                                 {/* Sign Up Link */}
                                 <div className="text-center mt-4">
                                     <p className="mb-0">Don't have an account? 
-                                        <a href="/signup" className="text-primary text-decoration-none"> Sign up here</a>
+                                        <Link to="/signup" className="text-primary text-decoration-none"> Sign up here</Link>
                                     </p>
                                 </div>
                             </div>
