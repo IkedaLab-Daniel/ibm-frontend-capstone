@@ -1,0 +1,286 @@
+/* ReviewForm Component Styles */
+
+.review-form-container {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+}
+
+.review-form-container .card {
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.review-form-container .card-header {
+    border-bottom: none;
+    background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+}
+
+.review-form-container .table {
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+.review-form-container .table thead th {
+    border-bottom: 2px solid #dee2e6;
+    font-weight: 600;
+    padding: 1rem;
+    background-color: #f8f9fa;
+}
+
+.review-form-container .table tbody tr {
+    transition: all 0.2s ease;
+}
+
+.review-form-container .table tbody tr:hover {
+    background-color: #f5f5f5;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.review-form-container .table td {
+    padding: 1rem;
+    vertical-align: middle;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.review-form-container .btn {
+    border-radius: 8px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.review-form-container .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.review-form-container .btn-primary {
+    background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+    border: none;
+}
+
+.review-form-container .btn-primary:hover {
+    background: linear-gradient(135deg, #0056b3 0%, #004085 100%);
+}
+
+.review-form-container .badge {
+    font-size: 0.8rem;
+    font-weight: 600;
+    padding: 0.5rem 0.75rem;
+    border-radius: 6px;
+}
+
+/* Interactive Stars */
+.interactive-star {
+    transition: all 0.2s ease;
+}
+
+.interactive-star:hover {
+    transform: scale(1.2);
+    filter: brightness(1.2);
+}
+
+/* Modal Enhancements */
+.review-form-container .modal-content {
+    border-radius: 12px;
+    border: none;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+}
+
+.review-form-container .modal-header {
+    background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+    color: white;
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+}
+
+.review-form-container .modal-header .btn-close {
+    filter: invert(1);
+    opacity: 0.8;
+}
+
+.review-form-container .modal-header .btn-close:hover {
+    opacity: 1;
+}
+
+.review-form-container .modal-body {
+    padding: 2rem;
+}
+
+.review-form-container .form-control {
+    border-radius: 8px;
+    border: 1px solid #ced4da;
+    transition: all 0.3s ease;
+    padding: 0.75rem 1rem;
+}
+
+.review-form-container .form-control:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+    transform: translateY(-1px);
+}
+
+.review-form-container .form-label {
+    font-weight: 600;
+    color: #495057;
+    margin-bottom: 0.5rem;
+}
+
+.review-form-container .form-check-input:checked {
+    background-color: #007bff;
+    border-color: #007bff;
+}
+
+/* Star Rating Animation */
+.review-form-container .bi-star-fill,
+.review-form-container .bi-star {
+    transition: all 0.2s ease;
+}
+
+/* Doctor Info Card in Modal */
+.review-form-container .modal-body .bg-light {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%) !important;
+    border: 1px solid #dee2e6;
+}
+
+/* Empty State */
+.review-form-container .bi-calendar-x {
+    color: #6c757d;
+    opacity: 0.5;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .review-form-container .table-responsive {
+        border-radius: 8px;
+    }
+    
+    .review-form-container .table td {
+        padding: 0.75rem 0.5rem;
+    }
+    
+    .review-form-container .modal-dialog {
+        margin: 1rem;
+    }
+    
+    .review-form-container .modal-body {
+        padding: 1.5rem;
+    }
+    
+    .review-form-container .display-5 {
+        font-size: 2rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .review-form-container .table thead {
+        display: none;
+    }
+    
+    .review-form-container .table tbody tr {
+        display: block;
+        border: 1px solid #dee2e6;
+        border-radius: 8px;
+        margin-bottom: 1rem;
+        padding: 1rem;
+        background: white;
+    }
+    
+    .review-form-container .table tbody td {
+        display: block;
+        border: none;
+        padding: 0.5rem 0;
+        text-align: left !important;
+    }
+    
+    .review-form-container .table tbody td:before {
+        content: attr(data-label) ": ";
+        font-weight: bold;
+        color: #007bff;
+    }
+}
+
+/* Animation for form submission */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.review-form-container .card {
+    animation: fadeInUp 0.6s ease-out;
+}
+
+/* Custom scrollbar for modal */
+.review-form-container .modal-body::-webkit-scrollbar {
+    width: 6px;
+}
+
+.review-form-container .modal-body::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 3px;
+}
+
+.review-form-container .modal-body::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 3px;
+}
+
+.review-form-container .modal-body::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+}
+
+/* Loading state for buttons */
+.review-form-container .btn.loading {
+    position: relative;
+    color: transparent;
+}
+
+.review-form-container .btn.loading:after {
+    content: "";
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    top: 50%;
+    left: 50%;
+    margin-left: -8px;
+    margin-top: -8px;
+    border: 2px solid transparent;
+    border-top-color: #ffffff;
+    border-radius: 50%;
+    animation: spin 1s ease infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Accessibility improvements */
+.review-form-container .btn:focus,
+.review-form-container .form-control:focus {
+    outline: 2px solid #007bff;
+    outline-offset: 2px;
+}
+
+/* Print styles */
+@media print {
+    .review-form-container .btn,
+    .review-form-container .modal {
+        display: none !important;
+    }
+    
+    .review-form-container .card {
+        box-shadow: none;
+        border: 1px solid #000;
+    }
+    
+    .review-form-container .table {
+        font-size: 12px;
+    }
+}

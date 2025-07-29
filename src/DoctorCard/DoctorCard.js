@@ -269,7 +269,6 @@ const DoctorCard = ({ doctor }) => {
                                             </div>
                                             <div className="col-md-9">
                                                 <h6 className="text-primary">Dr. {name}</h6>
-                                                <p className="text-muted mb-0">{speciality}</p>
                                                 <p className="text-muted mb-0">{experience} years experience</p>
                                             </div>
                                         </div>
