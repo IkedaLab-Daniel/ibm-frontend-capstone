@@ -26,8 +26,8 @@ const FindDoctorSearch = () => {
     const handleDoctorSelect = (speciality) => {
         setSearchDoctor(speciality);
         setDoctorResultHidden(true);
-        // Navigate to search results page with the selected speciality
-        navigate(`/search-doctor?speciality=${encodeURIComponent(speciality)}`);
+        // Navigate to doctor results page with the selected speciality
+        navigate(`/doctor-results?speciality=${encodeURIComponent(speciality)}`);
     };
 
     const handleInputChange = (e) => {

@@ -1,0 +1,167 @@
+/* DoctorCard Component Styles */
+
+.doctor-card {
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    border: none;
+    border-radius: 12px;
+}
+
+.doctor-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15) !important;
+}
+
+.doctor-image-container {
+    position: relative;
+}
+
+.doctor-image-container::after {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: calc(100% + 4px);
+    height: calc(100% + 4px);
+    border: 2px solid var(--bs-primary);
+    border-radius: 50%;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.doctor-card:hover .doctor-image-container::after {
+    opacity: 0.3;
+}
+
+.doctor-card .card-title {
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
+}
+
+.doctor-card .text-muted {
+    font-size: 0.9rem;
+}
+
+.doctor-card .btn {
+    border-radius: 8px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.doctor-card .btn:hover {
+    transform: translateY(-1px);
+}
+
+.doctor-card .btn-primary {
+    background: linear-gradient(135deg, var(--bs-primary) 0%, #4f73df 100%);
+    border: none;
+}
+
+.doctor-card .btn-primary:hover {
+    background: linear-gradient(135deg, #4f73df 0%, var(--bs-primary) 100%);
+    box-shadow: 0 4px 12px rgba(33, 144, 255, 0.3);
+}
+
+.doctor-card .btn-outline-danger:hover {
+    background-color: #dc3545;
+    border-color: #dc3545;
+    box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
+}
+
+/* Star Rating Styles */
+.doctor-card .bi-star-fill,
+.doctor-card .bi-star-half,
+.doctor-card .bi-star {
+    font-size: 0.9rem;
+    margin-right: 1px;
+}
+
+/* Modal Enhancements */
+.modal-content {
+    border-radius: 12px;
+    border: none;
+    overflow: hidden;
+}
+
+.modal-header {
+    border-bottom: none;
+    padding: 1.5rem;
+}
+
+.modal-body {
+    padding: 1.5rem;
+}
+
+.modal .form-control {
+    border-radius: 8px;
+    border: 1px solid #e1e5e9;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.modal .form-control:focus {
+    border-color: var(--bs-primary);
+    box-shadow: 0 0 0 0.2rem rgba(33, 144, 255, 0.25);
+}
+
+.modal .form-label {
+    font-weight: 600;
+    color: #495057;
+    margin-bottom: 0.5rem;
+}
+
+/* Appointment Info Card */
+.modal .card {
+    border-radius: 8px;
+    border: 1px solid #e1e5e9;
+}
+
+.modal .alert-success {
+    border-radius: 8px;
+    border: none;
+    background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .doctor-card .card-body {
+        padding: 1.5rem;
+    }
+    
+    .doctor-card .btn-lg {
+        font-size: 1rem;
+        padding: 0.75rem 1rem;
+    }
+    
+    .modal-dialog {
+        margin: 1rem;
+    }
+}
+
+/* Animation for modal */
+.modal.fade .modal-dialog {
+    transition: transform 0.3s ease-out;
+    transform: translate(0, -50px);
+}
+
+.modal.show .modal-dialog {
+    transform: none;
+}
+
+/* Custom scrollbar for modal */
+.modal-body::-webkit-scrollbar {
+    width: 6px;
+}
+
+.modal-body::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 3px;
+}
+
+.modal-body::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 3px;
+}
+
+.modal-body::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+}
