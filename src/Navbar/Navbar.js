@@ -94,6 +94,11 @@ const Navbar = () => {
                                 <i className="bi bi-star me-1"></i>Reviews
                             </Link>
                         </li>
+                        <li className="nav-item">
+                            <Link className="nav-link" to="/instant-consultation">
+                                <i className="bi bi-calendar-check me-1"></i>Instant Consultation
+                            </Link>
+                        </li>
                     </ul>
                     
                     {/* Auth buttons */}
